@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Verifying Access...</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: white;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .loader {
+      border: 6px solid #1e1e1e;
+      border-top: 6px solid #00e6e6;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1.5s linear infinite;
+      margin-top: 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+  <script>
+    function generateMegaToken() {
+      const now = Date.now();
+      const tenHoursLater = now + (10 * 60 * 60 * 1000); // +10 hours
+
+      const obj = {
+        verified: true,
+        watchedTime: now,
+        token: btoa("studyx_" + now + "_" + Math.random().toString(36).slice(2, 10)),
+        checksum: "STUDYX-" + Math.floor(Math.random() * 1000000),
+        flags: [true, false, true, true, false],
+        securityLayer: {
+          t1: "ok",
+          t2: 73 * 42,
+          t3: btoa("studyx-" + now)
+        },
+        meta: {
+          x: Math.random() * 999,
+          y: Math.floor(Math.random() * 123456),
+          z: now % 10000
+        },
+        trap1: "🧨",
+        trap2: "DO NOT MODIFY"
+      };
+
+      for (let i = 0; i < 100; i++) {
+        obj["decoy" + i] = "decoy-" + Math.random().toString(36).slice(2, 8);
+      }
+
+      localStorage.setItem("adVerification", JSON.stringify(obj));
+      localStorage.setItem("checker", "check");
+      localStorage.setItem("verifyToken", btoa("una_" + tenHoursLater));
+    }
+
+    const params = new URLSearchParams(location.search);
+    const fromShortener = document.referrer.includes("lksfy.com");
+    const hasPass = params.get("pass") === "ok";
+    const debug = params.get("debug") === "1";
+
+    if ((hasPass && fromShortener) || debug) {
+      generateMegaToken();
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1500);
+    } else {
+      alert("Access denied! Please go through the shortener link.");
+      window.location.href = "https://lksfy.com/generate-key";
+    }
+  </script>
+</head>
+<body>
+  <h1>Verifying Access...</h1>
+  <div class="loader"></div>
+</body>
+</html>
