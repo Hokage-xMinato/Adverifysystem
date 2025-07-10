@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Protected Page</title>
+  <style>
+    #content {
+      display: none;
+      font-family: 'Poppins', sans-serif;
+      padding: 20px;
+      background: #f7f7f7;
+      color: #222;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="content">
+    <h1>✅ Welcome! You're Verified.</h1>
+    <p>This content is protected by ultra-secure logic 🔐</p>
+  </div>
+
+  <script>
+    (function () {
+      const raw = localStorage.getItem("adVerification");
+      const checker = localStorage.getItem("checker");
+      const verifyToken = localStorage.getItem("verifyToken");
+
+      if (!raw || !checker || !verifyToken) return redirect();
+
+      try {
+        const data = JSON.parse(raw);
+        const realTime = data.watchedTime;
+        const unaDecoded = atob(verifyToken);
+
+        const valid =
+          data.verified === true &&
+          typeof data.token === "string" &&
+          typeof data.checksum === "string" &&
+          typeof data.watchedTime === "number" &&
+          (Date.now() - data.watchedTime) < 86400000 &&
+          data.securityLayer.t1 === "ok" &&
+          data.securityLayer.t2 === 3066 &&
+          data.trap2 === "DO NOT MODIFY" &&
+          Array.isArray(data.flags) &&
+          data.flags[0] === true &&
+          typeof data.decoy73 === "string" &&
+          typeof data.decoy21 === "string" &&
+          Object.keys(data).length >= 100 &&
+          checker === "check" &&
+          unaDecoded.startsWith("una_") &&
+          Math.abs(parseInt(unaDecoded.split("_")[1]) - (realTime + 36000000)) < 2000;
+
+        if (!valid) return fail();
+
+        document.getElementById("content").style.display = "block";
+      } catch (e) {
+        fail();
+      }
+
+      function fail() {
+        localStorage.clear();
+        redirect();
+      }
+
+      function redirect() {
+        window.location.href = "/verify.html";
+      }
+    })();
+  </script>
+</body>
+</html>
